@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Étape 9 — Gestion des rôles</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header>
+    <h1>Étape 9 — Gestion des rôles</h1>
+    <p>Attribuer des rôles aux utilisateurs et sécuriser l’accès aux routes</p>
+  </header>
+
+  <main>
+    <section class="objectifs">
+      <h2>Objectifs</h2>
+      <ul>
+        <li>Comprendre les différents rôles : user, organizer, admin</li>
+        <li>Restreindre l’accès à certaines fonctionnalités selon le rôle</li>
+        <li>Utiliser un middleware pour gérer les permissions</li>
+        <li>Intégrer les rôles dans le JWT</li>
+      </ul>
+    </section>
+
+    <section class="explanation">
+      <h2>Pourquoi gérer les rôles ?</h2>
+      <p>
+        Tous les utilisateurs n’ont pas les mêmes droits. Par exemple :
+      </p>
+      <ul>
+        <li><strong>User</strong> : peut consulter les annonces et postuler</li>
+        <li><strong>Organizer</strong> : peut créer et modifier ses annonces</li>
+        <li><strong>Admin</strong> : peut gérer tous les utilisateurs et toutes les annonces</li>
+      </ul>
+      <p>
+        Les rôles sont stockés dans la base et inclus dans le JWT pour sécuriser l’accès côté serveur.
+      </p>
+    </section>
+
+    <section class="commands">
+      <h2>Mise à jour JWT</h2>
+      <p>Inclure le rôle lors de la création du token :</p>
+      <pre><code>
+const token = jwt.sign({ id: user.id, role: user.role }, JWT_SECRET, { expiresIn: "2h" });
+      </code></pre>
+
+      <h2>Middleware de gestion des rôles</h2>
+      <pre><code>
+export function roleMiddleware(allowedRoles) {
+  return (req, res, next) => {
+    const userRole = req.user.role; // récupéré depuis le JWT
+    if (allowedRoles.includes(userRole)) {
+      next();
+    } else {
+      return res.status(403).send("Accès refusé");
+    }
+  };
+}
+      </code></pre>
+    </section>
+
+    <section class="example">
+      <h2>Exemple d’utilisation dans les routes</h2>
+      <pre><code>
+import express from "express";
+import { authMiddleware, roleMiddleware } from "../middleware/authMiddleware.js";
+import { listAnnonces } from "../controllers/annoncesController.js";
+
+const router = express.Router();
+
+// Routes accessibles à tous les utilisateurs connectés
+router.get("/", authMiddleware, listAnnonces);
+
+// Routes accessibles seulement aux organizers et admins
+router.post("/create", authMiddleware, roleMiddleware(["organizer", "admin"]), createAnnonce);
+
+// Routes accessibles seulement aux admins
+router.delete("/delete/:id", authMiddleware, roleMiddleware(["admin"]), deleteAnnonce);
+
+export default router;
+      </code></pre>
+
+      <p>Avec cette logique, les rôles définissent clairement qui peut accéder à quelles fonctionnalités.</p>
+    </section>
+
+    <section class="next-step">
+      <a href="10-crud-categorie.html" class="btn">Étape suivante : CRUD Catégorie</a>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 Cours Annonces Sportives</p>
+  </footer>
+
+  <script src="js/app.js"></script>
+</body>
+</html>

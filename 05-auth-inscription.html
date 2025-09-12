@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Étape 5 — Authentification (Inscription)</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header>
+    <h1>Étape 5 — Authentification (Inscription)</h1>
+    <p>Créer un formulaire d’inscription sécurisé avec Node.js et MySQL</p>
+  </header>
+
+  <main>
+    <section class="objectifs">
+      <h2>Objectifs</h2>
+      <ul>
+        <li>Comprendre l’importance de l’authentification</li>
+        <li>Hacher les mots de passe avant de les stocker</li>
+        <li>Créer un formulaire d’inscription sécurisé</li>
+        <li>Gérer les erreurs et validations côté serveur</li>
+      </ul>
+    </section>
+
+    <section class="explanation">
+      <h2>Pourquoi l’authentification ?</h2>
+      <p>
+        L’authentification permet de sécuriser l’accès aux fonctionnalités de votre application.
+        Chaque utilisateur a un compte protégé par un mot de passe. Les bonnes pratiques incluent :
+      </p>
+      <ul>
+        <li>Ne jamais stocker les mots de passe en clair</li>
+        <li>Valider les entrées pour éviter les injections SQL ou XSS</li>
+        <li>Gérer les erreurs et informer l’utilisateur de manière sécurisée</li>
+      </ul>
+      <p>
+        Nous allons utiliser <code>bcrypt</code> pour hacher les mots de passe avant de les stocker
+        dans MySQL.
+      </p>
+    </section>
+
+    <section class="commands">
+      <h2>Installation des dépendances</h2>
+      <pre><code>
+npm install bcrypt express-validator
+      </code></pre>
+
+      <h2>Structure MVC pour l’inscription</h2>
+      <pre><code>
+/src
+  /controllers
+    authController.js
+  /models
+    userModel.js
+  /routes
+    authRoutes.js
+  /views
+    register.twig
+      </code></pre>
+    </section>
+
+    <section class="example">
+      <h2>Exemple complet</h2>
+
+      <p>1. Model : <code>src/models/userModel.js</code></p>
+      <pre><code>
+import connection from "../config/db.js";
+import bcrypt from "bcrypt";
+
+export async function createUser(nom, email, password) {
+  const hashedPassword = await bcrypt.hash(password, 10);
+  const [result] = await connection.execute(
+    "INSERT INTO users (nom, email, password) VALUES (?, ?, ?)",
+    [nom, email, hashedPassword]
+  );
+  return result;
+}
+      </code></pre>
+
+      <p>2. Controller : <code>src/controllers/authController.js</code></p>
+      <pre><code>
+import { createUser } from "../models/userModel.js";
+import { validationResult } from "express-validator";
+
+export async function register(req, res) {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.render("register", { errors: errors.array() });
+  }
+
+  const { nom, email, password } = req.body;
+
+  try {
+    await createUser(nom, email, password);
+    res.redirect("/login");
+  } catch (err) {
+    res.render("register", { errors: [{ msg: "Erreur : email déjà utilisé" }] });
+  }
+}
+      </code></pre>
+
+      <p>3. Route : <code>src/routes/authRoutes.js</code></p>
+      <pre><code>
+import express from "express";
+import { register } from "../controllers/authController.js";
+import { body } from "express-validator";
+
+const router = express.Router();
+
+router.get("/register", (req, res) => res.render("register"));
+router.post("/register", 
+  body("email").isEmail(),
+  body("password").isLength({ min: 6 }),
+  register
+);
+
+export default router;
+      </code></pre>
+
+      <p>4. Template Twig : <code>src/views/register.twig</code></p>
+      <pre><code>
+<form action="/register" method="POST">
+  <label>Nom</label>
+  <input type="text" name="nom" required>
+  <label>Email</label>
+  <input type="email" name="email" required>
+  <label>Mot de passe</label>
+  <input type="password" name="password" required>
+  <button type="submit">S'inscrire</button>
+
+  {% if errors %}
+    <ul>
+      {% for error in errors %}
+        <li>{{ error.msg }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+</form>
+      </code></pre>
+    </section>
+
+    <section class="next-step">
+      <a href="06-auth-connexion.html" class="btn">Étape suivante : Authentification (Connexion)</a>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 Cours Annonces Sportives</p>
+  </footer>
+
+  <script src="js/app.js"></script>
+</body>
+</html>

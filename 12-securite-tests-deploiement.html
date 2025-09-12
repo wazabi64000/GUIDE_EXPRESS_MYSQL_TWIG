@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Étape 12 — Préparation au déploiement</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header>
+    <h1>Étape 12 — Préparation au déploiement</h1>
+    <p>Mettre en production votre projet d’annonces sportives</p>
+  </header>
+
+  <main>
+    <section class="objectifs">
+      <h2>Objectifs</h2>
+      <ul>
+        <li>Sécuriser le projet avec les variables d’environnement</li>
+        <li>Vérifier toutes les routes et fonctionnalités</li>
+        <li>Préparer la base de données pour la production</li>
+        <li>Déployer sur un serveur ou une plateforme cloud</li>
+      </ul>
+    </section>
+
+    <section class="explanation">
+      <h2>Vérification finale avant déploiement</h2>
+      <ul>
+        <li>Les routes protégées sont sécurisées avec <code>authMiddleware</code> et <code>roleMiddleware</code></li>
+        <li>Les mots de passe sont hachés et les JWT sont utilisés correctement</li>
+        <li>Les fichiers sensibles sont dans <code>.env</code> et non versionnés</li>
+        <li>Les uploads d’images sont correctement gérés dans <code>/public/images</code></li>
+        <li>Les templates Twig affichent correctement les données</li>
+      </ul>
+    </section>
+
+    <section class="commands">
+      <h2>Préparer l’environnement de production</h2>
+      <pre><code>
+# Installer toutes les dépendances
+npm install
+
+# Créer un fichier .env de production
+DB_HOST=production_host
+DB_USER=prod_user
+DB_PASSWORD=prod_password
+DB_NAME=annonces_sportives
+EMAIL_USER=monemail@gmail.com
+EMAIL_PASS=motdepasse
+JWT_SECRET=MaCleSecreteProd
+
+# Construire le projet si nécessaire (pour frontend)
+npm run build
+
+# Démarrer le serveur
+node src/server.js
+      </code></pre>
+
+      <h2>Conseils de déploiement</h2>
+      <ul>
+        <li>Utiliser un hébergeur Node.js (Heroku, Render, Railway, etc.)</li>
+        <li>Configurer un reverse proxy (Nginx) pour les images et la sécurité</li>
+        <li>Activer HTTPS pour sécuriser les connexions</li>
+        <li>Vérifier les permissions des fichiers uploadés</li>
+        <li>Effectuer un test complet de toutes les fonctionnalités avant mise en production</li>
+      </ul>
+    </section>
+
+    <section class="example">
+      <h2>Vérification finale</h2>
+      <p>1. Tester l’inscription, connexion et vérification d’email</p>
+      <p>2. Tester la réinitialisation du mot de passe</p>
+      <p>3. Tester la gestion des rôles et l’accès aux routes protégées</p>
+      <p>4. Tester le CRUD des catégories et annonces avec images et dates</p>
+      <p>5. Vérifier l’affichage responsive et fluide sur différents appareils</p>
+    </section>
+
+    <section class="conclusion">
+      <h2>Félicitations !</h2>
+      <p>
+        Si toutes les étapes sont complétées, votre projet est fonctionnel et prêt pour le déploiement.
+        Vous avez appris à créer un projet complet avec **Express, MySQL, Twig, JWT, Nodemailer**, 
+        un **CRUD complet**, et une **gestion des rôles et sécurité**.
+      </p>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 Cours Annonces Sportives</p>
+  </footer>
+
+  <script src="js/app.js"></script>
+</body>
+</html>

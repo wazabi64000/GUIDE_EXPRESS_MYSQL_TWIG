@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Étape 4 — Structure MVC</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header>
+    <h1>Étape 4 — Structure MVC</h1>
+    <p>Organiser le projet avec l'architecture Modèle-Vue-Contrôleur et configuration sécurisée</p>
+  </header>
+
+  <main>
+    <section class="objectifs">
+      <h2>Objectifs</h2>
+      <ul>
+        <li>Comprendre la logique de l’architecture MVC</li>
+        <li>Séparer les responsabilités : Models, Views, Controllers</li>
+        <li>Ajouter un dossier <code>config</code> pour centraliser la configuration</li>
+        <li>Utiliser un fichier <code>.env</code> pour les variables sensibles</li>
+        <li>Maintenir un code propre et évolutif</li>
+      </ul>
+    </section>
+
+    <section class="explanation">
+      <h2>Pourquoi un dossier <code>config</code> et un fichier <code>.env</code> ?</h2>
+      <p>
+        Pour sécuriser et centraliser la configuration de votre projet, il est recommandé d’utiliser :
+      </p>
+      <ul>
+        <li><strong>config/</strong> : contient les fichiers de configuration (ex : base de données, JWT, mail)</li>
+        <li><strong>.env</strong> : stocke les variables sensibles comme mots de passe, clés secrètes et paramètres environnementaux</li>
+      </ul>
+      <p>
+        Exemple : la connexion MySQL, la clé JWT et les identifiants de messagerie doivent être dans <code>.env</code> et jamais dans le code source.
+      </p>
+    </section>
+
+    <section class="commands">
+      <h2>Structure du projet mise à jour</h2>
+      <pre><code>
+/src
+  /config
+    db.js        # Connexion à MySQL
+    jwt.js       # Clé secrète JWT
+  /controllers
+    annoncesController.js
+  /models
+    annonceModel.js
+  /routes
+    annoncesRoutes.js
+  /views
+    index.twig
+    annonces.twig
+  server.js
+/public
+  /css
+  /js
+  /images
+.env           # Variables sensibles
+      </code></pre>
+
+      <h2>Exemple de fichier <code>.env</code></h2>
+      <pre><code>
+DB_HOST=localhost
+DB_USER=root
+DB_PASSWORD=motdepasse
+DB_NAME=annonces_sportives
+JWT_SECRET=MaCleSecreteSuperSecurisee
+      </code></pre>
+
+      <h2>Exemple de configuration MySQL (<code>src/config/db.js</code>)</h2>
+      <pre><code>
+import mysql from "mysql2/promise";
+import dotenv from "dotenv";
+
+dotenv.config();
+
+const connection = await mysql.createConnection({
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME
+});
+
+export default connection;
+      </code></pre>
+
+      <h2>Exemple de configuration JWT (<code>src/config/jwt.js</code>)</h2>
+      <pre><code>
+import dotenv from "dotenv";
+dotenv.config();
+
+export const JWT_SECRET = process.env.JWT_SECRET;
+      </code></pre>
+    </section>
+
+    <section class="example">
+      <h2>Intégration dans server.js</h2>
+      <pre><code>
+import express from "express";
+import path from "path";
+import { fileURLToPath } from "url";
+import twig from "twig";
+import annoncesRoutes from "./routes/annoncesRoutes.js";
+
+const app = express();
+const PORT = 3000;
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+app.set("views", path.join(__dirname, "views"));
+app.set("view engine", "twig");
+
+app.use("/annonces", annoncesRoutes);
+
+app.listen(PORT, () => console.log(`Serveur démarré sur http://localhost:${PORT}`));
+      </code></pre>
+      <p>
+        Grâce à cette organisation, toutes les informations sensibles sont centralisées et faciles à modifier sans toucher au code métier.
+      </p>
+    </section>
+
+    <section class="next-step">
+      <a href="05-auth-inscription.html" class="btn">Étape suivante : Authentification (Inscription)</a>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 Cours Annonces Sportives</p>
+  </footer>
+
+  <script src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Étape 10 — CRUD Catégorie</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header>
+    <h1>Étape 10 — CRUD Catégorie</h1>
+    <p>Créer, lire, modifier et supprimer des catégories pour les annonces</p>
+  </header>
+
+  <main>
+    <section class="objectifs">
+      <h2>Objectifs</h2>
+      <ul>
+        <li>Créer de nouvelles catégories</li>
+        <li>Afficher la liste des catégories</li>
+        <li>Modifier et supprimer des catégories existantes</li>
+        <li>Intégrer ces fonctionnalités dans le MVC et Twig</li>
+      </ul>
+    </section>
+
+    <section class="explanation">
+      <h2>Pourquoi un CRUD pour les catégories ?</h2>
+      <p>
+        Les catégories permettent de classer les annonces sportives et de faciliter la recherche pour les utilisateurs.
+        Un CRUD complet est nécessaire pour la gestion côté administrateur ou organisateur.
+      </p>
+    </section>
+
+    <section class="commands">
+      <h2>Structure MVC</h2>
+      <pre><code>
+/src
+  /controllers
+    categoryController.js
+  /models
+    categoryModel.js
+  /routes
+    categoryRoutes.js
+  /views
+    categories.twig
+    category-form.twig
+.env
+      </code></pre>
+    </section>
+
+    <section class="example">
+      <h2>Exemple complet</h2>
+
+      <p>1. Model : <code>src/models/categoryModel.js</code></p>
+      <pre><code>
+import connection from "../config/db.js";
+
+export async function getAllCategories() {
+  const [rows] = await connection.execute("SELECT * FROM categories");
+  return rows;
+}
+
+export async function getCategoryById(id) {
+  const [rows] = await connection.execute("SELECT * FROM categories WHERE id = ?", [id]);
+  return rows[0];
+}
+
+export async function createCategory(name) {
+  const [result] = await connection.execute("INSERT INTO categories (nom) VALUES (?)", [name]);
+  return result;
+}
+
+export async function updateCategory(id, name) {
+  const [result] = await connection.execute("UPDATE categories SET nom = ? WHERE id = ?", [name, id]);
+  return result;
+}
+
+export async function deleteCategory(id) {
+  const [result] = await connection.execute("DELETE FROM categories WHERE id = ?", [id]);
+  return result;
+}
+      </code></pre>
+
+      <p>2. Controller : <code>src/controllers/categoryController.js</code></p>
+      <pre><code>
+import * as Category from "../models/categoryModel.js";
+
+export async function listCategories(req, res) {
+  const categories = await Category.getAllCategories();
+  res.render("categories", { categories });
+}
+
+export async function showCreateForm(req, res) {
+  res.render("category-form", { action: "create" });
+}
+
+export async function createCategory(req, res) {
+  await Category.createCategory(req.body.nom);
+  res.redirect("/categories");
+}
+
+export async function showEditForm(req, res) {
+  const category = await Category.getCategoryById(req.params.id);
+  res.render("category-form", { action: "edit", category });
+}
+
+export async function updateCategory(req, res) {
+  await Category.updateCategory(req.params.id, req.body.nom);
+  res.redirect("/categories");
+}
+
+export async function deleteCategory(req, res) {
+  await Category.deleteCategory(req.params.id);
+  res.redirect("/categories");
+}
+      </code></pre>
+
+      <p>3. Routes : <code>src/routes/categoryRoutes.js</code></p>
+      <pre><code>
+import express from "express";
+import * as categoryController from "../controllers/categoryController.js";
+import { authMiddleware, roleMiddleware } from "../middleware/authMiddleware.js";
+
+const router = express.Router();
+
+// Toutes les routes accessibles seulement aux organizers et admins
+router.use(authMiddleware, roleMiddleware(["organizer","admin"]));
+
+router.get("/", categoryController.listCategories);
+router.get("/create", categoryController.showCreateForm);
+router.post("/create", categoryController.createCategory);
+router.get("/edit/:id", categoryController.showEditForm);
+router.post("/edit/:id", categoryController.updateCategory);
+router.get("/delete/:id", categoryController.deleteCategory);
+
+export default router;
+      </code></pre>
+
+      <p>4. Template Twig : <code>categories.twig</code></p>
+      <pre><code>
+<h2>Liste des catégories</h2>
+<a href="/categories/create">Créer une catégorie</a>
+<ul>
+  {% for category in categories %}
+    <li>{{ category.nom }}
+      <a href="/categories/edit/{{ category.id }}">Modifier</a>
+      <a href="/categories/delete/{{ category.id }}">Supprimer</a>
+    </li>
+  {% endfor %}
+</ul>
+      </code></pre>
+
+      <p>5. Template Twig : <code>category-form.twig</code></p>
+      <pre><code>
+<form action="{% if action == 'create' %}/categories/create{% else %}/categories/edit/{{ category.id }}{% endif %}" method="POST">
+  <label>Nom de la catégorie</label>
+  <input type="text" name="nom" value="{{ category.nom | default('') }}" required>
+  <button type="submit">{% if action == 'create' %}Créer{% else %}Modifier{% endif %}</button>
+</form>
+      </code></pre>
+    </section>
+
+    <section class="next-step">
+      <a href="11-crud-annonces.html" class="btn">Étape suivante : CRUD Annonces</a>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 Cours Annonces Sportives</p>
+  </footer>
+
+  <script src="js/app.js"></script>
+</body>
+</html>

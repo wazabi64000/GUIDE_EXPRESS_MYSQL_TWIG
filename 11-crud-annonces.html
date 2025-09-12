@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Étape 11 — CRUD Annonces</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header>
+    <h1>Étape 11 — CRUD Annonces</h1>
+    <p>Créer, lire, modifier et supprimer des annonces sportives avec images et catégories</p>
+  </header>
+
+  <main>
+    <section class="objectifs">
+      <h2>Objectifs</h2>
+      <ul>
+        <li>Créer une annonce avec titre, description, dates et images</li>
+        <li>Associer une catégorie à chaque annonce</li>
+        <li>Modifier et supprimer les annonces</li>
+        <li>Afficher la liste des annonces dans un template Twig</li>
+      </ul>
+    </section>
+
+    <section class="explanation">
+      <h2>Pourquoi un CRUD complet pour les annonces ?</h2>
+      <p>
+        Les annonces sont le cœur de l’application. Chaque annonce contient :
+      </p>
+      <ul>
+        <li>Titre et description</li>
+        <li>Date de début et date de fin</li>
+        <li>Une ou plusieurs images</li>
+        <li>Catégorie associée</li>
+      </ul>
+      <p>
+        La gestion complète en MVC permet de maintenir un code clair et évolutif.
+      </p>
+    </section>
+
+    <section class="commands">
+      <h2>Structure MVC</h2>
+      <pre><code>
+/src
+  /controllers
+    annoncesController.js
+  /models
+    annonceModel.js
+  /routes
+    annoncesRoutes.js
+  /views
+    annonces.twig
+    annonce-form.twig
+/public
+  /images/annonces
+.env
+      </code></pre>
+    </section>
+
+    <section class="example">
+      <h2>Exemple complet</h2>
+
+      <p>1. Model : <code>src/models/annonceModel.js</code></p>
+      <pre><code>
+import connection from "../config/db.js";
+
+export async function getAllAnnonces() {
+  const [rows] = await connection.execute(`
+    SELECT a.id, a.titre, a.description, a.date_debut, a.date_fin, c.nom AS categorie
+    FROM annonces a
+    LEFT JOIN categories c ON a.categorie_id = c.id
+  `);
+  return rows;
+}
+
+export async function getAnnonceById(id) {
+  const [rows] = await connection.execute("SELECT * FROM annonces WHERE id = ?", [id]);
+  return rows[0];
+}
+
+export async function createAnnonce(data) {
+  const { titre, description, date_debut, date_fin, categorie_id } = data;
+  const [result] = await connection.execute(
+    "INSERT INTO annonces (titre, description, date_debut, date_fin, categorie_id) VALUES (?, ?, ?, ?, ?)",
+    [titre, description, date_debut, date_fin, categorie_id]
+  );
+  return result;
+}
+
+export async function updateAnnonce(id, data) {
+  const { titre, description, date_debut, date_fin, categorie_id } = data;
+  const [result] = await connection.execute(
+    "UPDATE annonces SET titre=?, description=?, date_debut=?, date_fin=?, categorie_id=? WHERE id=?",
+    [titre, description, date_debut, date_fin, categorie_id, id]
+  );
+  return result;
+}
+
+export async function deleteAnnonce(id) {
+  const [result] = await connection.execute("DELETE FROM annonces WHERE id=?", [id]);
+  return result;
+}
+      </code></pre>
+
+      <p>2. Controller : <code>src/controllers/annoncesController.js</code></p>
+      <pre><code>
+import * as Annonce from "../models/annonceModel.js";
+import multer from "multer";
+import path from "path";
+
+// Configuration multer pour upload images
+const storage = multer.diskStorage({
+  destination: function(req, file, cb) {
+    cb(null, "public/images/annonces");
+  },
+  filename: function(req, file, cb) {
+    cb(null, Date.now() + path.extname(file.originalname));
+  }
+});
+export const upload = multer({ storage });
+
+export async function listAnnonces(req, res) {
+  const annonces = await Annonce.getAllAnnonces();
+  res.render("annonces", { annonces });
+}
+
+export async function showCreateForm(req, res) {
+  res.render("annonce-form", { action: "create" });
+}
+
+export async function createAnnonce(req, res) {
+  const data = req.body;
+  // Ajouter les images si upload
+  if (req.files) {
+    data.images = req.files.map(f => f.filename);
+  }
+  await Annonce.createAnnonce(data);
+  res.redirect("/annonces");
+}
+
+export async function showEditForm(req, res) {
+  const annonce = await Annonce.getAnnonceById(req.params.id);
+  res.render("annonce-form", { action: "edit", annonce });
+}
+
+export async function updateAnnonce(req, res) {
+  const data = req.body;
+  if (req.files) {
+    data.images = req.files.map(f => f.filename);
+  }
+  await Annonce.updateAnnonce(req.params.id, data);
+  res.redirect("/annonces");
+}
+
+export async function deleteAnnonce(req, res) {
+  await Annonce.deleteAnnonce(req.params.id);
+  res.redirect("/annonces");
+}
+      </code></pre>
+
+      <p>3. Routes : <code>src/routes/annoncesRoutes.js</code></p>
+      <pre><code>
+import express from "express";
+import * as annoncesController from "../controllers/annoncesController.js";
+import { authMiddleware, roleMiddleware } from "../middleware/authMiddleware.js";
+import { upload } from "../controllers/annoncesController.js";
+
+const router = express.Router();
+
+// Toutes les routes protégées
+router.use(authMiddleware, roleMiddleware(["organizer","admin"]));
+
+router.get("/", annoncesController.listAnnonces);
+router.get("/create", annoncesController.showCreateForm);
+router.post("/create", upload.array("images", 5), annoncesController.createAnnonce);
+router.get("/edit/:id", annoncesController.showEditForm);
+router.post("/edit/:id", upload.array("images", 5), annoncesController.updateAnnonce);
+router.get("/delete/:id", annoncesController.deleteAnnonce);
+
+export default router;
+      </code></pre>
+
+      <p>4. Template Twig : <code>annonces.twig</code></p>
+      <pre><code>
+<h2>Liste des annonces</h2>
+<a href="/annonces/create">Créer une annonce</a>
+<ul>
+  {% for annonce in annonces %}
+    <li>
+      <h3>{{ annonce.titre }} ({{ annonce.categorie }})</h3>
+      <p>{{ annonce.description }}</p>
+      <p>Du {{ annonce.date_debut }} au {{ annonce.date_fin }}</p>
+      <a href="/annonces/edit/{{ annonce.id }}">Modifier</a>
+      <a href="/annonces/delete/{{ annonce.id }}">Supprimer</a>
+    </li>
+  {% endfor %}
+</ul>
+      </code></pre>
+
+      <p>5. Template Twig : <code>annonce-form.twig</code></p>
+      <pre><code>
+<form action="{% if action == 'create' %}/annonces/create{% else %}/annonces/edit/{{ annonce.id }}{% endif %}" method="POST" enctype="multipart/form-data">
+  <label>Titre</label>
+  <input type="text" name="titre" value="{{ annonce.titre | default('') }}" required>
+
+  <label>Description</label>
+  <textarea name="description" required>{{ annonce.description | default('') }}</textarea>
+
+  <label>Date début</label>
+  <input type="date" name="date_debut" value="{{ annonce.date_debut | default('') }}" required>
+
+  <label>Date fin</label>
+  <input type="date" name="date_fin" value="{{ annonce.date_fin | default('') }}" required>
+
+  <label>Catégorie</label>
+  <select name="categorie_id" required>
+    {% for category in categories %}
+      <option value="{{ category.id }}" {% if annonce.categorie_id == category.id %}selected{% endif %}>{{ category.nom }}</option>
+    {% endfor %}
+  </select>
+
+  <label>Images</label>
+  <input type="file" name="images" multiple>
+
+  <button type="submit">{% if action == 'create' %}Créer{% else %}Modifier{% endif %}</button>
+</form>
+      </code></pre>
+    </section>
+
+    <section class="next-step">
+      <a href="12-securite-tests-deploiement.html" class="btn">Étape suivante : Préparation au déploiement</a>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 Cours Annonces Sportives</p>
+  </footer>
+
+  <script src="js/app.js"></script>
+</body>
+</html>

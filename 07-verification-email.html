@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Étape 7 — Vérification d’email</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header>
+    <h1>Étape 7 — Vérification d’email</h1>
+    <p>Envoyer un email de confirmation après l’inscription et valider le compte</p>
+  </header>
+
+  <main>
+    <section class="objectifs">
+      <h2>Objectifs</h2>
+      <ul>
+        <li>Comprendre l’intérêt de la vérification d’email</li>
+        <li>Envoyer un email avec Nodemailer et Gmail</li>
+        <li>Créer un lien de confirmation unique pour l’utilisateur</li>
+        <li>Valider le compte et activer l’accès aux fonctionnalités</li>
+      </ul>
+    </section>
+
+    <section class="explanation">
+      <h2>Pourquoi vérifier l’email ?</h2>
+      <p>
+        La vérification d’email permet de s’assurer que l’utilisateur est bien le propriétaire de l’adresse fournie. 
+        Cela évite les comptes frauduleux et améliore la sécurité de votre application.
+      </p>
+    </section>
+
+    <section class="commands">
+      <h2>Installation</h2>
+      <pre><code>
+npm install nodemailer crypto
+      </code></pre>
+
+      <h2>Structure MVC mise à jour</h2>
+      <pre><code>
+/src
+  /controllers
+    authController.js
+  /models
+    userModel.js
+  /routes
+    authRoutes.js
+  /config
+    db.js
+    jwt.js
+    mail.js       # configuration Nodemailer
+  /views
+    register.twig
+    verify.twig
+.env
+      </code></pre>
+    </section>
+
+    <section class="example">
+      <h2>Exemple complet</h2>
+
+      <p>1. Config Nodemailer : <code>src/config/mail.js</code></p>
+      <pre><code>
+import nodemailer from "nodemailer";
+import dotenv from "dotenv";
+
+dotenv.config();
+
+export const transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS
+  }
+});
+      </code></pre>
+
+      <p>2. Création du token de vérification et envoi du mail (dans <code>authController.js</code>)</p>
+      <pre><code>
+import { transporter } from "../config/mail.js";
+import crypto from "crypto";
+import { createUser, setVerificationToken } from "../models/userModel.js";
+
+export async function register(req, res) {
+  const { nom, email, password } = req.body;
+
+  const user = await createUser(nom, email, password);
+  
+  const token = crypto.randomBytes(32).toString("hex");
+  await setVerificationToken(user.id, token);
+
+  const url = `http://localhost:3000/verify/${token}`;
+  await transporter.sendMail({
+    from: process.env.EMAIL_USER,
+    to: email,
+    subject: "Vérification de votre compte",
+    html: `Cliquez <a href="${url}">ici</a> pour vérifier votre compte.`
+  });
+
+  res.render("register", { message: "Email de vérification envoyé !" });
+}
+      </code></pre>
+
+      <p>3. Validation du compte (<code>authController.js</code>)</p>
+      <pre><code>
+import { verifyUserToken } from "../models/userModel.js";
+
+export async function verify(req, res) {
+  const { token } = req.params;
+  const success = await verifyUserToken(token);
+  if (success) {
+    res.render("verify", { message: "Compte vérifié avec succès !" });
+  } else {
+    res.render("verify", { message: "Lien invalide ou expiré." });
+  }
+}
+      </code></pre>
+
+      <p>4. Routes (<code>authRoutes.js</code>)</p>
+      <pre><code>
+router.get("/verify/:token", verify);
+      </code></pre>
+
+      <p>5. Template Twig : <code>verify.twig</code></p>
+      <pre><code>
+<h2>{{ message }}</h2>
+<a href="/login">Se connecter</a>
+      </code></pre>
+    </section>
+
+    <section class="next-step">
+      <a href="08-reset-password.html" class="btn">Étape suivante : Réinitialisation mot de passe</a>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 Cours Annonces Sportives</p>
+  </footer>
+
+  <script src="js/app.js"></script>
+</body>
+</html>

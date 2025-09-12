@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Étape 1 — Initialisation du projet</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header>
+    <h1>Étape 1 — Initialisation du projet</h1>
+    <p>Installer Node.js, créer le projet Express en ESM et préparer la structure</p>
+  </header>
+
+  <main>
+    <section class="objectifs">
+      <h2>Objectifs</h2>
+      <ul>
+        <li>Comprendre la structure d’un projet Node.js avec Express</li>
+        <li>Initialiser un projet Node.js en mode ESM</li>
+        <li>Installer les dépendances de base</li>
+        <li>Créer un serveur minimal fonctionnel</li>
+      </ul>
+    </section>
+
+    <section class="commands">
+      <h2>Commandes Linux</h2>
+      <pre><code>
+# Créer le dossier du projet
+mkdir annonces-sportives
+cd annonces-sportives
+
+# Initialiser Node.js
+npm init -y
+npm pkg set type="module"
+
+# Installer Express et Nodemon pour dev
+npm install express
+npm install --save-dev nodemon
+
+# Créer structure initiale
+mkdir src src/routes src/controllers src/views public public/css public/js public/images
+touch src/server.js public/css/style.css public/js/app.js
+      </code></pre>
+    </section>
+
+    <section class="explanation">
+      <h2>Explications</h2>
+      <p><strong>Node.js</strong> : environnement JavaScript côté serveur.</p>
+      <p><strong>Express</strong> : framework minimal pour créer des serveurs web facilement.</p>
+      <p><strong>ESM</strong> : format de modules moderne (import/export) plutôt que CommonJS (require/module.exports).</p>
+      <p><strong>Nodemon</strong> : outil de développement qui redémarre automatiquement le serveur quand on modifie le code.</p>
+      <p><strong>Structure initiale</strong> : on sépare les fichiers pour avoir un projet organisé : <code>src</code> pour le backend, <code>public</code> pour les fichiers accessibles côté client.</p>
+    </section>
+
+    <section class="example">
+      <h2>Exemple de serveur minimal (src/server.js)</h2>
+      <pre><code>
+import express from "express";
+
+const app = express();
+const PORT = 3000;
+
+// Route de test
+app.get("/", (req, res) => {
+  res.send("Bienvenue sur le serveur Annonces Sportives !");
+});
+
+app.listen(PORT, () => {
+  console.log(`Serveur démarré sur http://localhost:${PORT}`);
+});
+      </code></pre>
+      <p>Pour démarrer le serveur en développement :</p>
+      <pre><code>
+npx nodemon src/server.js
+      </code></pre>
+    </section>
+
+    <section class="next-step">
+      <a href="02-twig.html" class="btn">Étape suivante : Twig et premier rendu</a>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 Cours Annonces Sportives</p>
+  </footer>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
