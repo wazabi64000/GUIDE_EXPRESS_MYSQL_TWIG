@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Conclusion - Cours Annonces Sportives</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- Navbar -->
+  <header>
+    <nav class="navbar">
+      <a href="01-introduction.html">Introduction</a>
+      <a href="02-installation.html">Installation</a>
+      <a href="03-arborescence.html">Arborescence</a>
+      <a href="04-mvc.html">MVC</a>
+      <a href="05-config-env.html">Config & .env</a>
+      <a href="06-auth-connexion.html">Auth</a>
+      <a href="07-verification-email.html">Vérification Email</a>
+      <a href="08-reset-password.html">Reset Password</a>
+      <a href="09-gestion-roles.html">Gestion Rôles</a>
+      <a href="10-crud-categorie.html">CRUD Catégorie</a>
+      <a href="11-crud-annonces.html">CRUD Annonces</a>
+      <a href="12-deploiement.html">Déploiement</a>
+      <a href="conclusion.html">Conclusion</a>
+    </nav>
+  </header>
+
+  <main>
+    <section>
+      <h1>Conclusion et Révision CCP</h1>
+      <p>Voici un récapitulatif des modules RNCP CCP1 et CCP2 et comment ils sont mis en œuvre dans le projet.</p>
+
+      <h2>CCP1 – Conception et maintenance d’une application web ou mobile</h2>
+      <table border="1" cellpadding="10" cellspacing="0">
+        <thead>
+          <tr>
+            <th>CCP</th>
+            <th>Module RNCP / Compétence</th>
+            <th>Exemple concret dans le projet</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>CCP1</td>
+            <td>Module 1 : Conception et maintenance d’une application web ou mobile – Architecture et développement backend</td>
+            <td>- <code>src/server.js</code> : serveur Express<br>- <code>src/routes/</code> : routes CRUD et authentification<br>- <code>src/controllers/</code> : logique métier<br>- <code>src/models/</code> : interaction MySQL</td>
+          </tr>
+          <tr>
+            <td>CCP1</td>
+            <td>Module 1 : Conception et maintenance d’une application web ou mobile – Authentification & sécurité</td>
+            <td>- <code>authController.js</code> : login, inscription<br>- <code>roleMiddleware.js</code> : gestion des rôles<br>- JWT + bcrypt pour sécuriser les mots de passe et les sessions</td>
+          </tr>
+          <tr>
+            <td>CCP1</td>
+            <td>Module 1 : Conception et maintenance d’une application web ou mobile – Base de données relationnelle</td>
+            <td>- MySQL avec tables <code>users</code>, <code>categories</code>, <code>annonces</code><br>- <code>userModel.js</code>, <code>categoryModel.js</code>, <code>annonceModel.js</code></td>
+          </tr>
+          <tr>
+            <td>CCP1</td>
+            <td>Module 1 : Conception et maintenance d’une application web ou mobile – Gestion des emails / notifications</td>
+            <td>- <code>mail.js</code> + Nodemailer pour vérification email et reset password</td>
+          </tr>
+          <tr>
+            <td>CCP1</td>
+            <td>Module 1 : Conception et maintenance d’une application web ou mobile – Gestion des fichiers et uploads</td>
+            <td>- Multer dans <code>annoncesController.js</code> pour gérer les images</td>
+          </tr>
+          <tr>
+            <td>CCP1</td>
+            <td>Module 1 : Conception et maintenance d’une application web ou mobile – Préparation au déploiement</td>
+            <td>- Étape 12, <code>.env</code>, sécurité, instructions de lancement</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>CCP2 – Intégration web et mobile</h2>
+      <table border="1" cellpadding="10" cellspacing="0">
+        <thead>
+          <tr>
+            <th>CCP</th>
+            <th>Module RNCP / Compétence</th>
+            <th>Exemple concret dans le projet</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>CCP2</td>
+            <td>Module 2 : Interface web dynamique</td>
+            <td>- <code>src/views/*.twig</code> : pages HTML dynamiques<br>- Formulaires CRUD, listes d’annonces, catégories</td>
+          </tr>
+          <tr>
+            <td>CCP2</td>
+            <td>Module 2 : HTML & CSS responsive</td>
+            <td>- <code>public/css/style.css</code> : design fluide, responsive, adapté aux mobiles</td>
+          </tr>
+          <tr>
+            <td>CCP2</td>
+            <td>Module 2 : JavaScript côté client</td>
+            <td>- <code>public/js/app.js</code> : validation simple des formulaires, interactivité, événements côté client</td>
+          </tr>
+          <tr>
+            <td>CCP2</td>
+            <td>Module 2 : Intégration frontend/backend</td>
+            <td>- Twig + Express : affichage dynamique des données MySQL dans les pages<br>- Exemple : liste des annonces, catégories associées, images</td>
+          </tr>
+          <tr>
+            <td>CCP2</td>
+            <td>Module 2 : Gestion de l’UX/UI</td>
+            <td>- Formulaires clairs et ergonomiques<br>- Boutons uniformes, navigation intuitive<br>- Responsive sur mobile et desktop</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p>Cette page vous permet de réviser rapidement tous les modules CCP1 et CCP2 et de montrer au jury les exemples concrets de votre projet.</p>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 Cours Annonces Sportives</p>
+  </footer>
+
+  <script src="js/app.js"></script>
+</body>
+</html>

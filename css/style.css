@@ -133,3 +133,23 @@ pre {
 .btn:hover {
   background: #005bb5;
 }
+
+
+
+.navbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+  background-color: #333;
+  padding: 0.5rem;
+}
+.navbar a {
+  color: #fff;
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+}
+.navbar a:hover {
+  background-color: #007bff;
+}
