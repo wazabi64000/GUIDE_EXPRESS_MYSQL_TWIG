@@ -28,9 +28,10 @@
 
   <main>
     <section>
-      <h1>Conclusion et Révision CCP</h1>
-      <p>Voici un récapitulatif des modules RNCP CCP1 et CCP2 et comment ils sont mis en œuvre dans le projet.</p>
+      <h1>Conclusion et Révision</h1>
+      <p>Voici un récapitulatif des modules RNCP (CCP1 & CCP2) et du référentiel REAC, avec les exemples concrets dans le projet.</p>
 
+      <!-- CCP1 -->
       <h2>CCP1 – Conception et maintenance d’une application web ou mobile</h2>
       <table border="1" cellpadding="10" cellspacing="0">
         <thead>
@@ -43,37 +44,38 @@
         <tbody>
           <tr>
             <td>CCP1</td>
-            <td>Module 1 : Conception et maintenance d’une application web ou mobile – Architecture et développement backend</td>
-            <td>- <code>src/server.js</code> : serveur Express<br>- <code>src/routes/</code> : routes CRUD et authentification<br>- <code>src/controllers/</code> : logique métier<br>- <code>src/models/</code> : interaction MySQL</td>
+            <td>Module 1 : Architecture et développement backend</td>
+            <td>- `src/server.js`<br>- `src/routes/`<br>- `src/controllers/`<br>- `src/models/`</td>
           </tr>
           <tr>
             <td>CCP1</td>
-            <td>Module 1 : Conception et maintenance d’une application web ou mobile – Authentification & sécurité</td>
-            <td>- <code>authController.js</code> : login, inscription<br>- <code>roleMiddleware.js</code> : gestion des rôles<br>- JWT + bcrypt pour sécuriser les mots de passe et les sessions</td>
+            <td>Module 1 : Authentification & sécurité</td>
+            <td>- `authController.js`<br>- `roleMiddleware.js`<br>- JWT + bcrypt</td>
           </tr>
           <tr>
             <td>CCP1</td>
-            <td>Module 1 : Conception et maintenance d’une application web ou mobile – Base de données relationnelle</td>
-            <td>- MySQL avec tables <code>users</code>, <code>categories</code>, <code>annonces</code><br>- <code>userModel.js</code>, <code>categoryModel.js</code>, <code>annonceModel.js</code></td>
+            <td>Module 1 : Base de données relationnelle</td>
+            <td>- MySQL : tables `users`, `categories`, `annonces`<br>- `userModel.js`, `categoryModel.js`, `annonceModel.js`</td>
           </tr>
           <tr>
             <td>CCP1</td>
-            <td>Module 1 : Conception et maintenance d’une application web ou mobile – Gestion des emails / notifications</td>
-            <td>- <code>mail.js</code> + Nodemailer pour vérification email et reset password</td>
+            <td>Module 1 : Emails / notifications</td>
+            <td>- `mail.js` + Nodemailer</td>
           </tr>
           <tr>
             <td>CCP1</td>
-            <td>Module 1 : Conception et maintenance d’une application web ou mobile – Gestion des fichiers et uploads</td>
-            <td>- Multer dans <code>annoncesController.js</code> pour gérer les images</td>
+            <td>Module 1 : Gestion des fichiers et uploads</td>
+            <td>- Multer dans `annoncesController.js`</td>
           </tr>
           <tr>
             <td>CCP1</td>
-            <td>Module 1 : Conception et maintenance d’une application web ou mobile – Préparation au déploiement</td>
-            <td>- Étape 12, <code>.env</code>, sécurité, instructions de lancement</td>
+            <td>Module 1 : Préparation au déploiement</td>
+            <td>- Étape 12, `.env`, sécurité, lancement serveur</td>
           </tr>
         </tbody>
       </table>
 
+      <!-- CCP2 -->
       <h2>CCP2 – Intégration web et mobile</h2>
       <table border="1" cellpadding="10" cellspacing="0">
         <thead>
@@ -86,33 +88,102 @@
         <tbody>
           <tr>
             <td>CCP2</td>
-            <td>Module 2 : Interface web dynamique</td>
-            <td>- <code>src/views/*.twig</code> : pages HTML dynamiques<br>- Formulaires CRUD, listes d’annonces, catégories</td>
+            <td>Interface web dynamique</td>
+            <td>- `src/views/*.twig`<br>- Formulaires CRUD, listes d’annonces</td>
           </tr>
           <tr>
             <td>CCP2</td>
-            <td>Module 2 : HTML & CSS responsive</td>
-            <td>- <code>public/css/style.css</code> : design fluide, responsive, adapté aux mobiles</td>
+            <td>HTML & CSS responsive</td>
+            <td>- `public/css/style.css`</td>
           </tr>
           <tr>
             <td>CCP2</td>
-            <td>Module 2 : JavaScript côté client</td>
-            <td>- <code>public/js/app.js</code> : validation simple des formulaires, interactivité, événements côté client</td>
+            <td>JavaScript côté client</td>
+            <td>- `public/js/app.js` : validation, interactivité</td>
           </tr>
           <tr>
             <td>CCP2</td>
-            <td>Module 2 : Intégration frontend/backend</td>
-            <td>- Twig + Express : affichage dynamique des données MySQL dans les pages<br>- Exemple : liste des annonces, catégories associées, images</td>
+            <td>Intégration frontend/backend</td>
+            <td>- Twig + Express : affichage dynamique des annonces et catégories</td>
           </tr>
           <tr>
             <td>CCP2</td>
-            <td>Module 2 : Gestion de l’UX/UI</td>
-            <td>- Formulaires clairs et ergonomiques<br>- Boutons uniformes, navigation intuitive<br>- Responsive sur mobile et desktop</td>
+            <td>Gestion de l’UX/UI</td>
+            <td>- Formulaires ergonomiques, boutons uniformes, responsive</td>
           </tr>
         </tbody>
       </table>
 
-      <p>Cette page vous permet de réviser rapidement tous les modules CCP1 et CCP2 et de montrer au jury les exemples concrets de votre projet.</p>
+      <!-- REAC -->
+      <h2>Référentiel REAC – Front-End & Back-End</h2>
+
+      <h3>Front-End sécurisé</h3>
+      <table border="1" cellpadding="10" cellspacing="0">
+        <thead>
+          <tr>
+            <th>Activité</th>
+            <th>Compétence</th>
+            <th>Exemple dans le projet</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Développer la partie front-end</td>
+            <td>Installer et configurer son environnement</td>
+            <td>Node.js + Express + Twig + MySQL installés, fichier `.env` sécurisé</td>
+          </tr>
+          <tr>
+            <td>Développer la partie front-end</td>
+            <td>Maquetter des interfaces utilisateur</td>
+            <td>Pages HTML/Twig structurées par étape (`src/views/*.html`)</td>
+          </tr>
+          <tr>
+            <td>Développer la partie front-end</td>
+            <td>Réaliser des interfaces statiques</td>
+            <td>Templates Twig statiques : introduction, installation, MVC, etc.</td>
+          </tr>
+          <tr>
+            <td>Développer la partie front-end</td>
+            <td>Développer la partie dynamique</td>
+            <td>Affichage dynamique des annonces avec Twig + JS pour validation et interactivité (`public/js/app.js`)</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Back-End sécurisé</h3>
+      <table border="1" cellpadding="10" cellspacing="0">
+        <thead>
+          <tr>
+            <th>Activité</th>
+            <th>Compétence</th>
+            <th>Exemple dans le projet</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Développer la partie back-end</td>
+            <td>Mettre en place une base de données relationnelle</td>
+            <td>MySQL : tables `users`, `categories`, `annonces` et relations</td>
+          </tr>
+          <tr>
+            <td>Développer la partie back-end</td>
+            <td>Développer des composants d’accès aux données SQL/NoSQL</td>
+            <td>`userModel.js`, `categoryModel.js`, `annonceModel.js` avec mysql2</td>
+          </tr>
+          <tr>
+            <td>Développer la partie back-end</td>
+            <td>Développer des composants métier côté serveur</td>
+            <td>`authController.js`, `categoryController.js`, `annoncesController.js`, middlewares JWT et rôles</td>
+          </tr>
+          <tr>
+            <td>Développer la partie back-end</td>
+            <td>Documenter le déploiement</td>
+            <td>Étape 12, `.env`, instructions de lancement, sécurité, tests finaux</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p>Cette page permet de réviser tous les modules CCP1, CCP2 et les compétences REAC avec des exemples concrets à présenter lors de l’oral.</p>
     </section>
   </main>
 
